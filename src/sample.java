@@ -16,6 +16,7 @@ public class sample {
 	private static double [] means;
 	private static double [] stds;
 	
+	
 	public static void main(String[] args) throws IOException {	
 		
 		// Allocating arrays to hold means and stds of each trial run
@@ -35,7 +36,7 @@ public class sample {
 			DescriptiveStatistics stats = new DescriptiveStatistics();
 			
 			for(int j = 0; j < trials[i]; j++) {
-				findSample(totalSample, dataSize);
+				findSample(dataSize);
 			}
 			
 			// Calculate Mean and SD
@@ -61,18 +62,25 @@ public class sample {
 		}
 		
 		// Make the graph -- numbers of runs vs. means
-		createChart(trials, means);
+		createChart();
 	}
 	
 	
-	public static void createChart(int[] trials, double[] means2) {
+	/**
+	 * Function: 	createChart()
+	 * Parameters: 	None, uses static int[] trials and double[] mean
+	 * Description:	Creates a datasets of x and y plots. Number of trials
+	 * 				is on the x-axis and normalized mean is on the y-axis
+	 * Returns:		A graph made on Desktop
+	 */
+	public static void createChart() {
 		XYSeriesCollection dataSet = new XYSeriesCollection();
 		XYSeries series = new XYSeries("Plotted Points");
 		
-		for(int m = 0; m < means2.length; m++) {
-			series.add(trials[m], means2[m]);
+		for(int m = 0; m < means.length; m++) {
+			series.add(trials[m], means[m]);
 			System.out.println("Trials: " + trials[m]);
-			System.out.println("Means: " + means2[m]);
+			System.out.println("Means: " + means[m]);
 		}
 		
 		dataSet.addSeries(series);
@@ -90,13 +98,21 @@ public class sample {
 								false);
 		
 		try {
-			ChartUtilities.saveChartAsJPEG(new File("C:\\Users\\Alicia\\Desktop\\chart.jpg"), chart, 500, 300);
+			ChartUtilities.saveChartAsJPEG(new File("C:\\Users\\Alicia\\Desktop\\chart.jpg"), 
+													chart, 500, 300);
 		} catch (IOException e) {
 			System.err.println("Problem occurred creating chart: " + e);
 		}
 	}
 	
 	
+	/**
+	 * Function: 	getDataSize()
+	 * Parameters: 	String csv --	the name of the CSV file
+	 * Description:	Finds the number of rows (data) in the CSV file by reading
+	 * 				each row.
+	 * Returns:		The data size of the CSV file
+	 */
 	public static int getDataSize(String csv) throws IOException {
 		// Read in CSV file
 		InputStream in = sample.class.getClassLoader().getResourceAsStream(csv);
@@ -114,7 +130,18 @@ public class sample {
 	}
 	
 	
-	public static void findSample(double [] sample, double size) {
+	/**
+	 * Function: 	findSample()
+	 * Parameters: 	double size	--	data size of the csv file
+	 * Description:	Finds a specified percentage (eg. 10%) of the total
+	 * 				data in the CSV file and marks if the index has occurred
+	 * 				based on the random number being less than the threshold.
+	 * 				Updates the threshold value based on Nn (number needed to
+	 * 				complete sample) and Nr (Number of elements left to be
+	 * 				tested)
+	 * Returns:		totalSample array with updated occurrences of indices
+	 */
+	public static void findSample(double size) {
 		// Set the sample size to 10%
 		double sampleSize = size * percent; 
 		
@@ -126,7 +153,7 @@ public class sample {
 			thres = (sampleSize - count)/(size - i);
 			if(rnd.nextDouble() < thres){
 				count++;
-				sample[i]++;
+				totalSample[i]++;
 			}
 		}
 	}
