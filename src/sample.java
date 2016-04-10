@@ -90,7 +90,7 @@ public class sample {
 
 		// Number of selected items
 		double count = 0;
-		double thres;
+		double thres = 0;
 		
 		for(int i = 0; i < size; i++) {
 			thres = (sampleSize - count)/(size - i);

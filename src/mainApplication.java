@@ -55,6 +55,10 @@ public class mainApplication {
 			System.out.println("Normalize mean is " + normalMean);
 			System.out.println("Normalize SD is " + normalSD);
 			//System.out.println("-----");
+			
+			// Reset all the counts to zero for each run
+			for(int s = 0; s < totalSample.length; s++)
+				totalSample[s] = 0;
 		}
 			
 		// Make the graph -- numbers of runs vs. means
