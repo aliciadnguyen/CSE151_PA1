@@ -52,8 +52,8 @@ public class mainApplication {
 				
 			//System.out.println("Sample mean is " + sampleMean);
 			//System.out.println("Sample SD is " + sampleSD);
-			System.out.println("Normalize mean is " + normalMean);
-			System.out.println("Normalize SD is " + normalSD);
+			//System.out.println("Normalize mean is " + normalMean);
+			//System.out.println("Normalize SD is " + normalSD);
 			//System.out.println("-----");
 			
 			// Reset all the counts to zero for each run

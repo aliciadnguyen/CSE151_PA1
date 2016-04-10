@@ -1,0 +1,13 @@
+Please read this in order to understand our program.
+
+CLASS mainApplication:
+	The driver to running the program of calculating the mean and standard deviation of the trial runs (10, 100, 1000, etc). It will instantiate a 'sample class' in order to find the number of data elements in the csv file as well as find a random 10% sample of the csv file. In addition it will create a chart on my Desktop.
+
+	NOTE: Change this line of code (the path directory) in mainApplication.java to ensure that the chart is created on YOUR desktop
+	At line 43: (under public static void main())
+	CHANGE new File("C:\\Users\\Alicia\\Desktop\\chart.jpg"),...
+	TO new File(<your pathname>\\chart.jpg),...
+
+CLASS sample:
+	Contains the functions that will get the number of data in the CSV file, find the random 10% sample, and create the chart based on the sample's mean and standard deviation.
+
