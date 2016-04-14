@@ -15,34 +15,49 @@ public class sample {
 	 * 		is on the x-axis and normalized mean is on the y-axis
 	 * Returns:	A graph made on Desktop
 	 */
-	public void createChart(double[] means, int[] trials) {
-		XYSeriesCollection dataSet = new XYSeriesCollection();
-		XYSeries series = new XYSeries("Plotted Points");
+	public void createChart(double[] means, double[] stds, int[] trials) {
+		XYSeriesCollection meanDataSet = new XYSeriesCollection();
+		XYSeriesCollection stdDataSet = new XYSeriesCollection();
+		XYSeries meanSeries = new XYSeries("Plotted Points");
+		XYSeries stdSeries = new XYSeries("Plotted Points");
 		
 		for(int m = 0; m < means.length; m++) {
-			series.add(trials[m], means[m]);
+			meanSeries.add(trials[m], means[m]);
+			stdSeries.add(trials[m], stds[m]);
 			//System.out.println("Trials: " + trials[m]);
 			//System.out.println("Means: " + means[m]);
 		}
 		
-		dataSet.addSeries(series);
+		meanDataSet.addSeries(meanSeries);
+		stdDataSet.addSeries(stdSeries);
 		
-		String chartTitle = "Runs vs Mean Graph";
+		String meanChartTitle = "Runs vs Mean Graph";
+		String stdChartTitle = "Runs vs Standard Deviation Graph";
 		String xAxisLabel = "X";
 		String yAxisLabel = "Y";
 		
-		JFreeChart chart = ChartFactory.createXYLineChart(
-					chartTitle, xAxisLabel, 
-					yAxisLabel, dataSet,
+		JFreeChart meanChart = ChartFactory.createXYLineChart(
+					meanChartTitle, xAxisLabel, 
+					yAxisLabel, meanDataSet,
 					PlotOrientation.VERTICAL,
 					true,
 					true,
 					false);
+		JFreeChart stdChart = ChartFactory.createXYLineChart(
+				stdChartTitle, xAxisLabel, 
+				yAxisLabel, stdDataSet,
+				PlotOrientation.VERTICAL,
+				true,
+				true,
+				false);
 		
 		try {
 			ChartUtilities.saveChartAsJPEG(
-				new File("C:\\Users\\Alicia\\Desktop\\chart.jpg"), 
-				chart, 500, 300);
+				new File("C:\\Users\\Alicia\\Desktop\\meanChart.jpg"), 
+				meanChart, 500, 300);
+			ChartUtilities.saveChartAsJPEG(
+				new File("C:\\Users\\Alicia\\Desktop\\stdChart.jpg"), 
+				stdChart, 500, 300);
 		} catch (IOException e) {
 			System.err.println("Problem occurred creating chart: " + e);
 		}
