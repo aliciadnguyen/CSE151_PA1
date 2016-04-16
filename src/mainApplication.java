@@ -23,7 +23,7 @@ public class mainApplication {
 		
 		// Apply K Nearest Neighbor on test sample 10%
 		confusionMatrix c = new confusionMatrix();
-		double[][] vectors = c.storeData("Seperable.csv");
+		double[][] vectors = c.storeData("ex.csv");
 	}
 }	
 	
