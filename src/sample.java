@@ -8,6 +8,14 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 public class sample {
+	double [][] test;
+	double [][] train;
+	
+	public sample(double[][] test, double[][] train) {
+		this.test = test;
+		this.train = train;
+	}
+	
 	/**
 	 * Function: 	createChart()
 	 * Parameters: 	None, uses static int[] trials and double[] mean
@@ -99,20 +107,41 @@ public class sample {
 	 * 		tested)
 	 * Returns:	totalSample array with updated occurrences of indices
 	 */
-	public void findSample(Random rnd, double[] totalSample, double size, double percent) {
+	public sample findSample(Random rnd, double[][] totalSample, double percent) {
+		
 		// Set the sample size to 10%
+		double size = totalSample.length;
 		double sampleSize = size * percent; 
+		
+		test = new double[(int)sampleSize][10];
+		train = new double[(int)(size - sampleSize)][10];
+				
 
 		// Number of selected items
 		double count = 0;
 		double thres;
 		
+		int trainI = 0;
+		int testI = 0;
+		
 		for(int i = 0; i < size; i++) {
 			thres = (sampleSize - count)/(size - i);
 			if(rnd.nextDouble() < thres){
 				count++;
-				totalSample[i]++;
+				for(int j = 0; j < totalSample[i].length; j++) {
+					test[testI][j] = totalSample[i][j];
+				} 
+				testI++;
+			}
+			else {
+				for(int j = 0; j < totalSample[i].length; j++) {
+					train[trainI][j] = totalSample[i][j];
+				} 
+				trainI++;
 			}
 		}
+		
+		sample s = new sample(test, train);
+		return s;
 	}
 }
