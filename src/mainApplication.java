@@ -5,11 +5,16 @@ public class mainApplication {
 	public static String originalCSV = "abalone.csv";
 	public static String[] csvFiles = {"Seperable.csv", "3percent-miscategorization.csv", "10percent-miscatergorization.csv"};
 	public static int[] kNum = {1, 3, 5, 7, 9};
+	public static double[] eRate;
+	public static double[] abaERate;
 	
 	public static void main(String[] args) throws IOException {
 		// Used to find random 10% of data file
 		double percent = 0.10;
 		Random rnd = new Random();
+		
+		eRate = new double[5];
+		abaERate = new double[5];
 		
 		// Hard-coded numbers to represent number of classifications
 		int binaryClass = 2;
@@ -89,6 +94,11 @@ public class mainApplication {
 			double [][] abaConfuse = c.cmTable(abaPrediction, abaAccuracy, (int)largest + 1);
 			System.out.println("Confusion Matrix");
 			c.printArr(abaConfuse);
+			
+			// Stores each knn's error rates for abalone data set
+			abaERate[k] = c.errorRate(abaConfuse, abaCount);
+			System.out.println("Error Rate is " + abaERate[k]);
+			
 		}
 		
 		
@@ -133,7 +143,16 @@ public class mainApplication {
 				double [][] confuse = c.cmTable(prediction, accuracy, binaryClass);
 				System.out.println("Confusion Matrix");
 				c.printArr(confuse);
+				
+				// Stores each knn's error rates for error rate data set
+				eRate[k] = c.errorRate(confuse, s.test.length);
+				System.out.println("Error Rate is " + eRate[k]);
 			}
+		}
+		
+		System.out.println("Error Rates for error rate files");
+		for(int e = 0; e < eRate.length; e++) {
+			System.out.println(eRate[e]);
 		}
 	}
 }	

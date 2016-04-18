@@ -158,14 +158,24 @@ class confusionMatrix {
 	
 	/**
 	 * Function:	errorRate()
-	 * Description:	Calculates error rate from the Confusion Matrix
-	 * Parameters:	confusionTable	--	table used to find error rates
+	 * Description:	Calculates error rate from the Confusion Matrix.
+	 * 				accuracy = # classified correctly / total # classified
+	 * Parameters:	table	--	table used to find error rates
 	 * Returns:		the error rate of that table
 	 */
-	public double errorRate(double[][] confusionTable) {
-		int er = 0;
+	public double errorRate(double[][] table, double total) {
+		double er = 0.0;
+		double correct = 0.0;
 		
+		for(int i = 0; i < table.length; i++) {
+			for(int j = 0; j < table[i].length; j++) {
+				if(i == j) {
+					correct += table[i][j];
+				}
+			}
+		}
 		
+		er = correct/total;
 		
 		return er;
 	}
