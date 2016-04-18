@@ -99,14 +99,17 @@ public class sample {
 	
 	/**
 	 * Function: 	findSample()
-	 * Parameters: 	double size	--	data size of the csv file
+	 * Parameters: 			rnd	-- random number generated from RNG
+	 * 				totalSample	-- 2D array that holds all data from 
+	 * 							   csv files
+	 * 					percent -- percentages of what to sample (eg. 10)
 	 * Description:	Finds a specified percentage (eg. 10%) of the total
 	 * 		data in the CSV file and marks if the index has occurred
 	 * 		based on the random number being less than the threshold.
 	 * 		Updates the threshold value based on Nn (number needed to
 	 * 		complete sample) and Nr (Number of elements left to be
 	 * 		tested)
-	 * Returns:	totalSample array with updated occurrences of indices
+	 * Returns:	the test and training sets of the dataset files
 	 */
 	public sample findSample(Random rnd, double[][] totalSample, double percent) {
 		

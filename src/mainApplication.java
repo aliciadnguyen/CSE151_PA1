@@ -7,6 +7,7 @@ public class mainApplication {
 	public static int[] kNum = {1, 3, 5, 7, 9};
 	
 	public static void main(String[] args) throws IOException {
+		// Used to find random 10% of data file
 		double percent = 0.10;
 		Random rnd = new Random();
 		
@@ -17,6 +18,7 @@ public class mainApplication {
 		int abaCols = 11;
 		int errorCols = 10;
 		
+		// Arrays to hold predictions and accuracy of each dataset files
 		double[] abaPrediction;
 		double[] abaAccuracy;
 		double[] prediction;
@@ -57,7 +59,6 @@ public class mainApplication {
 			}
 			
 			for(int i = 0; i < abaS.test.length; i++) {
-				// Index 9 holds the classification column
 				abaAccuracy[i] = abaS.test[i][abaCols-1]; 
 			}
 			
@@ -73,6 +74,7 @@ public class mainApplication {
 			for(int accBin = 0; accBin < abaAccuracy.length; accBin++) {
 				System.out.print(abaAccuracy[accBin] + " ");
 			}
+			
 			System.out.println();
 			
 			// Calculate the Confusion Matrix
@@ -83,9 +85,7 @@ public class mainApplication {
 				if(abaAccuracy[num] > largest)
 					largest = abaAccuracy[num];
 			}
-			
-			//System.out.println("Largest is : " + largest);
-			
+						
 			double [][] abaConfuse = c.cmTable(abaPrediction, abaAccuracy, (int)largest + 1);
 			System.out.println("Confusion Matrix");
 			c.printArr(abaConfuse);
@@ -111,7 +111,6 @@ public class mainApplication {
 				}
 				
 				for(int i = 0; i < s.test.length; i++) {
-					// Index 9 holds the classification column
 					accuracy[i] = s.test[i][errorCols-1]; 
 				}
 				
@@ -127,6 +126,7 @@ public class mainApplication {
 				for(int accBin = 0; accBin < accuracy.length; accBin++) {
 					System.out.print(accuracy[accBin] + " ");
 				}
+				
 				System.out.println();
 				
 				// Calculate the Confusion Matrix

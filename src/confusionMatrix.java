@@ -10,17 +10,18 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 class confusionMatrix {
 	
-	public double[][] resetArr(double [][] a) {
-		for(int i = 0; i < a.length; i++) {
-			for(int j = 0; i < a[i].length; j++) {
-				a[i][j] = 0;
-			}
-		}
-		return a;
-	}
-	
 	/**
-	 * Make the data into vectors by putting them in a 2D array 
+	 * Function:	abaloneData()
+	 * Description:	Reads in the abalone.csv file and converts the gender files
+	 * 				making proxy variables (M, F, I). Stores all the data from
+	 * 				csv file into a 2D array. Then swaps the 2D array's rows and
+	 * 				columns in order to perform z-scaling on each features (by
+	 * 				finding the mean and std of each column and normalizing the
+	 * 				values). Then it swaps back the 2D array again to be in its
+	 * 				original format with updated z-scaled numeric values.
+	 * Parameters:	csv 	-- file to gather data from
+	 * 				count 	-- number of observations in datafile
+	 * Returns:		2D array of updated z-scaled values
 	 */
 	public double[][] abaloneData(String csv, int count) throws IOException {
 		double[][] abaObser = null;
@@ -54,17 +55,16 @@ class confusionMatrix {
 			j++;
 		}
 		
-		//printArr(abaObser);
-		
 		// Swapping columns and rows
 		double swap[][] = swapArr(abaObser);
 		double scaleObs[][] = new double [abaObser[0].length][abaObser.length];
 		
-		// Perform z-scaling on swap array
+		// Perform z-scaling on swap array on index 3 to preserve M, F, I cols
 		int sR = 3;
 		for(; sR < swap.length-1; sR++){
 			scaleObs[sR] = zScale(swap[sR]);
 		}
+		
 		scaleObs[0] = swap[0];
 		scaleObs[1] = swap[1];
 		scaleObs[2] = swap[2];
@@ -72,12 +72,22 @@ class confusionMatrix {
 		
 		double[][] scaleArr = swapArr(scaleObs);
 		
-		reader.close();
-		//printArr(scaleArr);
-		
+		reader.close();	
 		return scaleArr;	
 	}
 	
+	
+	/**
+	 * Function:	storeData()
+	 * Description:	Reads in the error rates files. Stores all the data from
+	 * 				csv file into a 2D array. Then swaps the 2D array's rows and
+	 * 				columns in order to perform z-scaling on each features (by
+	 * 				finding the mean and std of each column and normalizing the
+	 * 				values). Then it swaps back the 2D array again to be in its
+	 * 				original format with updated z-scaled numeric values.
+	 * Parameters:	csv 	-- file to gather data from
+	 * Returns:		2D array of updated z-scaled values
+	 */
 	public double[][] storeData(String csv) throws IOException {
 		double[][] obserVectors = null;
 		double[] obArray;
@@ -87,7 +97,6 @@ class confusionMatrix {
 		double [][] trainData = null;
 		
 		sample s = new sample(testData, trainData);
-		
 		int count = s.getDataSize(csv);
 		
 		// Read in CSV file
@@ -120,14 +129,22 @@ class confusionMatrix {
 		for(; sR < swap.length-1; sR++){
 			scaleObs[sR] = zScale(swap[sR]);
 		}
-		scaleObs[sR] = swap[sR];
-		
+		scaleObs[sR] = swap[sR];	
 		double[][] scaleArr = swapArr(scaleObs);
 		
 		reader.close();
 		return scaleArr;
 	}
 	
+	
+	/**
+	 * Function:	cmTable()
+	 * Description:	Calculates the Confusion Matrix table for each dataset file
+	 * Parameters:			p --	prediction array made from calculating knn
+	 * 						a --	accuracy array found from test dataset 
+	 * 				numLabels -- 	number of labels in dataset 
+	 * Returns:		2D array of confusion matrix
+	 */
 	public double[][] cmTable(double[] p, double[] a, int numLabels) {
 		double[][] cm = new double [numLabels][numLabels];
 		
@@ -136,6 +153,21 @@ class confusionMatrix {
 		}
 		
 		return cm;
+	}
+	
+	
+	/**
+	 * Function:	errorRate()
+	 * Description:	Calculates error rate from the Confusion Matrix
+	 * Parameters:	confusionTable	--	table used to find error rates
+	 * Returns:		the error rate of that table
+	 */
+	public double errorRate(double[][] confusionTable) {
+		int er = 0;
+		
+		
+		
+		return er;
 	}
 	
 	/**
@@ -155,6 +187,7 @@ class confusionMatrix {
 		System.out.println();
 	}
 	
+	
 	/**
 	 * Function:	swapArr
 	 * Description:	Swaps the rows and columns of the array
@@ -172,9 +205,10 @@ class confusionMatrix {
 		return swap;
 	}
 
+	
 	/**
 	 * Function:	zScale()
-	 * Parameters:
+	 * Parameters:	featureCol	-- the column of each specified feature
 	 * Description:	For each column, find the mean and std
 	 * 				Then perform z-scale: (vector - mean)/std
 	 * Returns: 	A new column with z-scale numbers (an array)
@@ -205,10 +239,12 @@ class confusionMatrix {
 	 * 				dist((x, y), (a, b)) = sqrt((x-a)^2) + (y-b)^2);
 	 * Parameters:	double[] testPt	 --	as a point on the plane
 	 * 				double[] trainPt --	as a point on the plane
+	 * Returns:		A predicted classifier number
 	 */
 	public double kNearestNeighbor(double[] testPt, double[][] trainPt, int k) {
 		List<Result> resultList = new ArrayList<Result>();
 		
+		// Calculate the Euclidean distance of two points
 		for(int row = 0; row < trainPt.length; row++) {
 			double dist = 0.0;
 			int classification = 0;
@@ -220,6 +256,7 @@ class confusionMatrix {
 			resultList.add(new Result(distance, trainPt[row][classification]));
 		}
 		
+		// Sort the array based on distances in ascending order
 		Collections.sort(resultList, new DistanceComparator());
 		
 		double[] knn = new double[k];
@@ -227,13 +264,20 @@ class confusionMatrix {
 			knn[x] = resultList.get(x).classifier;
 		}
 		
-		
+		// Find the most common element in array
 		double majElem = majorityElement(knn);
 
 		// Return the smallest distance element
 		return majElem;
 	}
 	
+	
+	/**
+	 * Function:	majorityElement()
+	 * Description:	Find the highest number in any given array
+	 * Parameters:	a	-- the array to look for the highest number in
+	 * Returns:		The highest number
+	 */
 	public double majorityElement(double[] a) {
 		int count = 1, tempCount;
 		double popular = a[0];
@@ -255,6 +299,15 @@ class confusionMatrix {
 		  return popular;
 	}
 	
+	
+	/**
+	 * Class:		Result
+	 * Description:	This object holds the values of distance and its classifier
+	 * 				label. Result is used as an object when finding the
+	 * 				k nearest neighbor.
+	 * Attributes:	distance 	-- holds the euclidean distance from two points
+	 * 				classifier	-- the number it is labeled as
+	 */
 	static class Result {
 		double distance;
 		double classifier;
@@ -264,6 +317,16 @@ class confusionMatrix {
 		}
 	}
 	
+	
+	/**
+	 * Class:		DistanceComparator
+	 * Description:	An object used to order an list of Results object based on
+	 * 				its distances. It will sort the list based on its distance
+	 * 				on ascending order. This function is used to find k nearest
+	 * 				neighbors.
+	 * Attributes:	compare		--  function to override in order to sort distances
+	 * 								in ascending order
+	 */
 	static class DistanceComparator implements Comparator<Result> {
 		@Override
 		public int compare(Result a, Result b) {
