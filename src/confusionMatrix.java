@@ -6,12 +6,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.util.Pair;
 
 class confusionMatrix {
+	
+	public double[][] resetArr(double [][] a) {
+		for(int i = 0; i < a.length; i++) {
+			for(int j = 0; i < a[i].length; j++) {
+				a[i][j] = 0;
+			}
+		}
+		return a;
+	}
 	
 	/**
 	 * Make the data into vectors by putting them in a 2D array 
@@ -69,8 +75,7 @@ class confusionMatrix {
 		reader.close();
 		//printArr(scaleArr);
 		
-		return scaleArr;
-		
+		return scaleArr;	
 	}
 	
 	public double[][] storeData(String csv) throws IOException {
@@ -185,12 +190,9 @@ class confusionMatrix {
 		
 		double mean = stats.getMean();
 		double sd = stats.getStandardDeviation();
-		
-		//System.out.println("Mean is " + mean + " " + "SD is " + sd);
-		
+				
 		for(int i = 0; i < featureCol.length; i++) {
 			scale[i] = (featureCol[i] - mean) / sd;
-			//System.out.println(scale[i]);
 		}
 		
 		return scale;
@@ -216,7 +218,6 @@ class confusionMatrix {
 			}
 			double distance = Math.sqrt(dist);
 			resultList.add(new Result(distance, trainPt[row][classification]));
-			//System.out.println("Classifier: " + trainPt[row][classification] + " Distance is: " + distance);
 		}
 		
 		Collections.sort(resultList, new DistanceComparator());
@@ -224,14 +225,11 @@ class confusionMatrix {
 		double[] knn = new double[k];
 		for(int x = 0; x < k; x++){
 			knn[x] = resultList.get(x).classifier;
-			//System.out.println(knn[x]);
 		}
 		
 		
 		double majElem = majorityElement(knn);
 
-		//.out.println("ME: " + majElem);
-		//System.out.println("-------------------");
 		// Return the smallest distance element
 		return majElem;
 	}
