@@ -92,6 +92,7 @@ public class sample {
 			row = reader.readLine();
 		}
 		
+		reader.close();
 		return dataSize;
 	}
 	
@@ -111,11 +112,12 @@ public class sample {
 		
 		// Set the sample size to 10%
 		double size = totalSample.length;
-		double sampleSize = size * percent; 
+		double sampleSize = size * percent;
 		
-		test = new double[(int)sampleSize][10];
-		train = new double[(int)(size - sampleSize)][10];
-				
+		int cols = totalSample[0].length;
+		
+		test = new double[(int)sampleSize][cols];
+		train = new double[(int)(size - sampleSize)][cols];
 
 		// Number of selected items
 		double count = 0;
@@ -124,7 +126,7 @@ public class sample {
 		int trainI = 0;
 		int testI = 0;
 		
-		for(int i = 0; i < size; i++) {
+		for(int i = 0; i < size - 1; i++) {
 			thres = (sampleSize - count)/(size - i);
 			if(rnd.nextDouble() < thres){
 				count++;
@@ -140,7 +142,7 @@ public class sample {
 				trainI++;
 			}
 		}
-		
+			
 		sample s = new sample(test, train);
 		return s;
 	}

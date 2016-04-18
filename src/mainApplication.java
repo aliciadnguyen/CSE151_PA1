@@ -1,32 +1,127 @@
 import java.io.IOException;
 import java.util.Random;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
 public class mainApplication {
-	public String[] csvFiles = {"abalone.csv", "Seperable.csv", "3percent-miscategorization.csv", "10percent-miscatergorization"};
+	public static String originalCSV = "abalone.csv";
+	public static String[] csvFiles = {"Seperable.csv", "3percent-miscategorization.csv", "10percent-miscatergorization.csv"};
 	public static void main(String[] args) throws IOException {
 		double percent = 0.10;
-		double[] totalSample;
 		Random rnd = new Random();
 		
+		// Hard-coded numbers to represent number of classifications
+		int binaryClass = 2;
 		
+		// Hard-coded numbers to represent number of columns in abalone and other csv files
+		int abaCols = 11;
+		int errorCols = 10;
+		
+		double[] abaPrediction;
+		double[] abaAccuracy;
+		double[] prediction;
+		double[] accuracy;
+		
+		// Sample - 10% Test data and 90% Training Data
+		double [][] abaTestData = null;
+		double [][] abaTrainData = null;
+		double [][] testData = null;
+		double [][] trainData = null;
+
 		// Instantiate a new object of sample class
-		//sample test = new sample();
+		sample abaS = new sample(abaTestData, abaTrainData);
+		sample s = new sample(testData, trainData);
+		
+		int abaCount = abaS.getDataSize(originalCSV);
 		
 		// Seed RNG		
 		rnd.setSeed(0);
 		
-		// Get dataSize from CSV file
-		//double dataSize = test.getDataSize("abalone.csv");
-		//totalSample = new double[(int)dataSize];
-		//test.findSample(rnd, totalSample, dataSize, percent);
-		
 		// Apply K Nearest Neighbor on test sample 10%
 		confusionMatrix c = new confusionMatrix();
-		//double[][] vectors = c.storeData("Seperable.csv");
-		double[][] a = c.abaloneData("abalone.csv");
+
+		/* ------------ ABALONE FILES ----------------*/
+		System.out.println("Calculations for Abalone.csv");
+		double[][] a = c.abaloneData(originalCSV, abaCount);
+		abaS.findSample(rnd, a, percent);
+
+		// Find K Nearest Neighbor with Test and Training Data
+		abaPrediction = new double [abaS.test.length];
+		abaAccuracy = new double [abaS.test.length];
 		
+		for(int testPt = 0; testPt < abaS.test.length; testPt++) {
+			abaPrediction[testPt] = c.kNearestNeighbor(abaS.test[testPt], abaS.train, 5);
+		}
+		
+		for(int i = 0; i < abaS.test.length; i++) {
+			// Index 9 holds the classification column
+			abaAccuracy[i] = abaS.test[i][abaCols-1]; 
+		}
+		
+		// Output the accurate and prediction table
+		System.out.println("Prediction Array");
+		for(int predBin = 0; predBin < abaPrediction.length; predBin++) {
+			System.out.print(abaPrediction[predBin] + " ");
+		}
+		
+		System.out.println();
+		
+		System.out.println("Accuracy Array");
+		for(int accBin = 0; accBin < abaAccuracy.length; accBin++) {
+			System.out.print(abaAccuracy[accBin] + " ");
+		}
+		System.out.println();
+		
+		// Calculate the Confusion Matrix
+		double largest = Integer.MIN_VALUE;
+		for(int num = 0; num < abaPrediction.length; num++) {
+			if(abaPrediction[num] > largest)
+				largest = abaPrediction[num];
+		}
+		
+		//System.out.println("Largest is : " + largest);
+		
+		double [][] abaConfuse = c.cmTable(abaPrediction, abaAccuracy, (int)largest + 1);
+		System.out.println("Confusion Matrix");
+		c.printArr(abaConfuse);
+		
+
+		/* ------------ ERROR RATE FILES ----------------*/
+		for(int file = 0; file < csvFiles.length; file++) {
+			System.out.println("Calculations for " + csvFiles[file]);
+			double[][] vectors = c.storeData(csvFiles[file]);
+			s.findSample(rnd, vectors, percent);
+
+			// Find K Nearest Neighbor with Test and Training Data
+			prediction = new double [s.test.length];
+			accuracy = new double [s.test.length];
+			
+			for(int testPt = 0; testPt < s.test.length; testPt++) {
+				prediction[testPt] = c.kNearestNeighbor(s.test[testPt], s.train, 5);
+			}
+			
+			for(int i = 0; i < s.test.length; i++) {
+				// Index 9 holds the classification column
+				accuracy[i] = s.test[i][errorCols-1]; 
+			}
+			
+			// Output the accurate and prediction table
+			System.out.println("Prediction Array");
+			for(int predBin = 0; predBin < prediction.length; predBin++) {
+				System.out.print(prediction[predBin] + " ");
+			}
+			
+			System.out.println();
+			
+			System.out.println("Accuracy Array");
+			for(int accBin = 0; accBin < accuracy.length; accBin++) {
+				System.out.print(accuracy[accBin] + " ");
+			}
+			System.out.println();
+			
+			// Calculate the Confusion Matrix
+			double [][] confuse = c.cmTable(prediction, accuracy, binaryClass);
+			System.out.println("Confusion Matrix");
+			c.printArr(confuse);
+		}
 	}
 }	
 	

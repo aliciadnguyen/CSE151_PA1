@@ -16,20 +16,9 @@ class confusionMatrix {
 	/**
 	 * Make the data into vectors by putting them in a 2D array 
 	 */
-	public double[][] abaloneData(String csv) throws IOException {
-		double[] prediction;
-		double[] accuracy;
-		
+	public double[][] abaloneData(String csv, int count) throws IOException {
 		double[][] abaObser = null;
 		double[] obArray;
-		
-		// Sample - 10% Test data and 90% Training Data
-		double [][] testData = null;
-		double [][] trainData = null;
-		
-		sample s = new sample(testData, trainData);
-		
-		int count = s.getDataSize(csv);
 		
 		// Read in CSV file
 		InputStream in = sample.class.getClassLoader().getResourceAsStream(csv);
@@ -59,21 +48,34 @@ class confusionMatrix {
 			j++;
 		}
 		
-		printArr(abaObser);
-		return abaObser;
+		//printArr(abaObser);
+		
+		// Swapping columns and rows
+		double swap[][] = swapArr(abaObser);
+		double scaleObs[][] = new double [abaObser[0].length][abaObser.length];
+		
+		// Perform z-scaling on swap array
+		int sR = 3;
+		for(; sR < swap.length-1; sR++){
+			scaleObs[sR] = zScale(swap[sR]);
+		}
+		scaleObs[0] = swap[0];
+		scaleObs[1] = swap[1];
+		scaleObs[2] = swap[2];
+		scaleObs[sR] = swap[sR];
+		
+		double[][] scaleArr = swapArr(scaleObs);
+		
+		reader.close();
+		//printArr(scaleArr);
+		
+		return scaleArr;
 		
 	}
 	
 	public double[][] storeData(String csv) throws IOException {
 		double[][] obserVectors = null;
 		double[] obArray;
-		Random rnd = new Random();
-		double percent = 0.10;
-		int binaryClass = 2;
-		int abaloneClass = 20;
-		
-		double[] prediction;
-		double[] accuracy;
 		
 		// Sample - 10% Test data and 90% Training Data
 		double [][] testData = null;
@@ -104,16 +106,9 @@ class confusionMatrix {
 			j++;
 		}
 		
-		// Print Array
-		//System.out.println("Normal Array: --------------- ");
-		//printArr(obserVectors);
-		
 		// Swapping columns and rows
 		double swap[][] = swapArr(obserVectors);
 		double scaleObs[][] = new double [obserVectors[0].length][obserVectors.length];
-		
-		//System.out.println("Swap Array: --------------- ");
-		//printArr(swap);
 		
 		// Perform z-scaling on swap array
 		int sR = 0;
@@ -122,54 +117,14 @@ class confusionMatrix {
 		}
 		scaleObs[sR] = swap[sR];
 		
-		//System.out.println("Z-scale Array: --------------- ");
-		//printArr(scaleObs);
-		
 		double[][] scaleArr = swapArr(scaleObs);
-		//System.out.println("Swap Z-scale Array: --------------- ");
-		//printArr(scaleArr);
-		
-		s.findSample(rnd, obserVectors, percent);
-		
-		//System.out.println("Length: " + s.test.length);
-		
-		// Find K Nearest Neighbor with Test and Training Data
-		prediction = new double [s.test.length];
-		accuracy = new double [s.test.length];
-		
-		for(int i = 0; i < s.test.length; i++) {
-			prediction[i] = kNearestNeighbor(s.test[i], s.train, 5);
-		}
-		
-		for(int i = 0; i < s.test.length; i++) {
-			// Index 9 holds the classification column
-			accuracy[i] = s.test[i][9]; 
-		}
-		
-		// Output the accurate and prediction table
-		System.out.println("Prediction Array");
-		for(int i = 0; i < prediction.length; i++) {
-			System.out.print(prediction[i] + " ");
-		}
-		
-		System.out.println();
-		
-		System.out.println("Accuracy Array");
-		for(int i = 0; i < accuracy.length; i++) {
-			System.out.print(accuracy[i] + " ");
-		}
-		System.out.println();
-		
-		// Calculate the Confusion Matrix
-		double [][] confuse = cmTable(prediction, accuracy);
-		printArr(confuse);
 		
 		reader.close();
-		return null;
+		return scaleArr;
 	}
 	
-	public double[][] cmTable(double[] p, double[] a) {
-		double[][] cm = new double [2][2];
+	public double[][] cmTable(double[] p, double[] a, int numLabels) {
+		double[][] cm = new double [numLabels][numLabels];
 		
 		for(int i = 0; i < p.length; i++) {
 			cm[(int)p[i]][(int)a[i]]++;
@@ -191,6 +146,8 @@ class confusionMatrix {
 			}
 			System.out.println();
 		}
+		System.out.println();
+		System.out.println();
 	}
 	
 	/**
